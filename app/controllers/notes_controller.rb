@@ -13,11 +13,19 @@ class NotesController < ApplicationController
 	end
 	
 	def create
+	#solucionar esos id_id
 		@note = Note.new(note_params)
-		if @note.save
-			redirect_to @note
-		else
-			render 'new'
+		@note.user = User.find_by name: session[:user]
+		@note.collection = Collection.find_by id:[1]
+		respond_to do |format|
+			if @note.save!
+				format.html {redirect_to @note, notice: 'Note was successfully created.' }
+				format.json { render :show, status: :created, location: @note }
+			else
+				format.html { render :new }
+				format.json { render json: @note.errors, status: :unprocessable_entity }
+				
+			end
 		end
 	end
 	
